@@ -26,6 +26,7 @@ const now = () => new Date().toISOString();
 const db = {
   // ── USERS ──────────────────────────────────────────────────────────────
   users: {
+    findAll: () => data.users,
     findByPhone: (phone) => data.users.find(u => u.phone === phone) || null,
     findByEmail: (email) => data.users.find(u => u.email === email) || null,
     findById: (id) => data.users.find(u => u.id === id) || null,
@@ -48,6 +49,7 @@ const db = {
 
   // ── APPLICATIONS ───────────────────────────────────────────────────────
   applications: {
+    findAll: () => data.applications,
     create: (app) => {
       const record = {
         status: 'SUBMITTED',
@@ -69,6 +71,7 @@ const db = {
 
   // ── DOCUMENTS ──────────────────────────────────────────────────────────
   documents: {
+    findAll: () => data.documents,
     create: (doc) => {
       const record = { uploaded_at: now(), ...doc };
       data.documents.push(record);
@@ -83,6 +86,7 @@ const db = {
 
   // ── TICKETS ────────────────────────────────────────────────────────────
   tickets: {
+    findAll: () => data.tickets,
     create: (ticket) => {
       const record = { status: 'OPEN', created_at: now(), ...ticket };
       data.tickets.push(record);

@@ -13,6 +13,7 @@ const loanRoutes = require('./routes/loans');
 const creditCardRoutes = require('./routes/creditcards');
 const documentRoutes = require('./routes/documents');
 const supportRoutes = require('./routes/support');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -34,6 +35,7 @@ app.use('/loan-track', loanRoutes); // /loan-track/* handled inside loans.js
 app.use('/credit-cards', creditCardRoutes);
 app.use('/documents', documentRoutes);
 app.use('/support', supportRoutes);
+app.use('/admin', adminRoutes);
 
 // ─────────────────────────────────────────────────────────────────────────
 // 🌐 WEBSITE SYNC WEBHOOK
