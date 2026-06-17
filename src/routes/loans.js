@@ -76,6 +76,17 @@ router.post('/balance-transfer/apply', optionalAuth, (req, res) => {
 });
 
 // ─── LOAN TRACK (LoanPT-LAN) ──────────────────────────────────────────────────
+
+// Public endpoint — app sends its local LANs, backend returns updated status for each
+router.post('/loan-track/sync', (req, res) => {
+  const { lans } = req.body; // array of LAN strings
+  if (!Array.isArray(lans) || lans.length === 0) return res.json({ loans: [] });
+  const loans = lans
+    .map(lan => db.applications.findAll().find(a => a.lan === lan))
+    .filter(Boolean);
+  res.json({ loans });
+});
+
 router.get('/loan-track/my-loans', authMiddleware, (req, res) => {
   const apps = db.applications.findByUser(req.user.id);
   res.json({ loans: apps });
