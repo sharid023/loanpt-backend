@@ -1,0 +1,6 @@
+node_modules/
+uploads/
+*.log
+err.log
+out.log
+server.log
