@@ -1,7 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, optionalAuth } = require('../middleware/auth');
 const { generateLAN } = require('../utils/lan');
 
 const router = express.Router();
@@ -39,7 +39,7 @@ router.get('/personal/offers', (req, res) => {
   });
 });
 
-router.post('/personal/apply', authMiddleware, (req, res) => {
+router.post('/personal/apply', optionalAuth, (req, res) => {
   const app = createApplication({ userId: req.user.id, productType: 'PERSONAL_LOAN', body: req.body });
   res.status(201).json({ message: 'Application submitted', application: app });
 });
@@ -55,7 +55,7 @@ router.get('/od/offers', (req, res) => {
   });
 });
 
-router.post('/od/apply', authMiddleware, (req, res) => {
+router.post('/od/apply', optionalAuth, (req, res) => {
   const app = createApplication({ userId: req.user.id, productType: 'OD_LIMIT', body: req.body });
   res.status(201).json({ message: 'OD application submitted', application: app });
 });
@@ -70,7 +70,7 @@ router.get('/balance-transfer/offers', (req, res) => {
   });
 });
 
-router.post('/balance-transfer/apply', authMiddleware, (req, res) => {
+router.post('/balance-transfer/apply', optionalAuth, (req, res) => {
   const app = createApplication({ userId: req.user.id, productType: 'BALANCE_TRANSFER', body: req.body });
   res.status(201).json({ message: 'Balance Transfer application submitted', application: app });
 });

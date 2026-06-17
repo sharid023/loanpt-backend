@@ -1,7 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
-const { authMiddleware } = require('../middleware/auth');
+const { optionalAuth } = require('../middleware/auth');
 const { generateLAN } = require('../utils/lan');
 
 const router = express.Router();
@@ -17,13 +17,16 @@ router.get('/offers', (req, res) => {
   });
 });
 
-router.post('/apply', authMiddleware, (req, res) => {
-  const { name, mobile, email, city, incomeType, selectedCard, bank } = req.body;
+router.post('/apply', optionalAuth, (req, res) => {
+  const { name, mobile, email, city, incomeType, selectedCard, cardName, bankName, bank, applicantName, applicantMobile, applicantEmail } = req.body;
   const id = uuidv4();
   const lan = generateLAN('CREDIT_CARD');
 
   const application = db.applications.create({
-    id, lan, user_id: req.user.id, product_type: 'CREDIT_CARD', status: 'SUBMITTED',
+    id, lan, user_id: req.user?.id || null, product_type: 'CREDIT_CARD', status: 'SUBMITTED',
+    employment_type: incomeType, card_name: cardName || selectedCard,
+    applicant_name: applicantName || name, applicant_mobile: applicantMobile || mobile,
+    applicant_email: applicantEmail || email, city, source: 'app', bank_name: bankName || bank || null,
     employment_type: incomeType, card_name: selectedCard, applicant_name: name,
     applicant_mobile: mobile, applicant_email: email, city, source: 'app', bank_name: bank || null,
   });

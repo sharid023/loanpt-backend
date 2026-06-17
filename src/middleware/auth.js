@@ -26,4 +26,17 @@ function authMiddleware(req, res, next) {
   }
 }
 
-module.exports = { signToken, authMiddleware, JWT_SECRET };
+// Optional auth — attaches user if token valid, but never blocks the request
+function optionalAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (token) {
+    try {
+      req.user = jwt.verify(token, JWT_SECRET);
+    } catch (e) {}
+  }
+  if (!req.user) req.user = { id: null };
+  next();
+}
+
+module.exports = { signToken, authMiddleware, optionalAuth, JWT_SECRET };
