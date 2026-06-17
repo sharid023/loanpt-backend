@@ -50,6 +50,16 @@ const db = {
   // ── APPLICATIONS ───────────────────────────────────────────────────────
   applications: {
     findAll: () => data.applications,
+    updateStatus: (id, status, comment) => {
+      const app = data.applications.find(a => a.id === id);
+      if (!app) return null;
+      app.status = status;
+      app.updated_at = now();
+      if (!app.statusHistory) app.statusHistory = [];
+      app.statusHistory.push({ status, comment: comment || '', changedAt: now() });
+      saveData(data);
+      return app;
+    },
     create: (app) => {
       const record = {
         status: 'SUBMITTED',
