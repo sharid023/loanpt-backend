@@ -31,21 +31,24 @@ const STATUS_OPTIONS = [
 ];
 
 // Update application status + comment
-router.post('/update-status', (req, res) => {
+router.post('/update-status', async (req, res) => {
   const { key, appId, status, comment } = req.body;
   if (key !== process.env.ADMIN_KEY) return res.status(401).json({ message: 'Unauthorized' });
-  const app = db.applications.updateStatus(appId, status, comment);
-  if (!app) return res.status(404).json({ message: 'Application not found' });
-  res.json({ message: 'Updated', application: app });
+  try {
+    const app = await db.applications.updateStatus(appId, status, comment);
+    if (!app) return res.status(404).json({ message: 'Application not found' });
+    res.json({ message: 'Updated', application: app });
+  } catch (e) { res.status(500).json({ message: e.message }); }
 });
 
-router.get('/', adminAuth, (req, res) => {
+router.get('/', adminAuth, async (req, res) => {
   const key = req.adminKey;
-  const applications = db.applications.findAll().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  const users = db.users.findAll();
-  const documents = db.documents.findAll();
-  const tickets = db.tickets.findAll();
-
+  const [applications, users, documents, tickets] = await Promise.all([
+    db.applications.findAll(),
+    db.users.findAll(),
+    db.documents.findAll(),
+    db.tickets.findAll(),
+  ]);
   const getStatusObj = (s) => STATUS_OPTIONS.find(o => o.value === s) || STATUS_OPTIONS[0];
 
   const statusOptionsHtml = STATUS_OPTIONS.map(s =>
